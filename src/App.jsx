@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import './App.css'
+import { Toaster } from 'sonner'
 import brandLogo from './assets/brand-logo.svg'
 import heroImage from './assets/hero-image.svg'
 import avatar1 from './assets/avatar-1.svg'
@@ -7,7 +8,7 @@ import avatar2 from './assets/avatar-2.svg'
 import avatar3 from './assets/avatar-3.svg'
 import { RulesAndFormModal } from './components/RegistrationForm'
 
-function Header({ onRegister }) {
+function Header() {
   const [open, setOpen] = useState(false)
 
   function handleRegisterClick(e) {
@@ -221,7 +222,7 @@ export default function App() {
 
   function handleOpenForm() { setShowReg(true) }
   function handleCloseForm() { setShowReg(false) }
-  function handleFormSubmit(values) {
+  function handleFormSubmit() {
     // here you could send values to server; we increment count and close modal
     setRegistered(s=>s+1)
     setShowReg(false)
@@ -240,6 +241,7 @@ export default function App() {
       </main>
       <Footer />
       <RulesAndFormModal open={showReg} onClose={handleCloseForm} onSubmit={handleFormSubmit} />
+      <Toaster position="bottom-right" />
     </div>
   )
 }

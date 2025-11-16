@@ -153,15 +153,14 @@ body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--da
 
 /* Payment section styles */
 .payment-section {
-  margin: 24px 0;
+  margin: 0;
   padding: 20px;
   background: #f8f8f8;
   border-radius: 12px;
 }
 
 .payment-section h4 {
-  margin: 0 0 16px;
-  font-size: 18px;
+  margin: 0;
 }
 
 .payment-form {
