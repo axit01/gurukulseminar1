@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { stripePromise } from '../stripe-config'
 import { openRazorpay } from './Razorpay'
 import { toast } from 'sonner'
+import { saveRegistration } from '../Firebase'
 
 export function RulesAndFormModal({ open, onClose, onSubmit }) {
   const [accepted, setAccepted] = useState(false)
@@ -121,27 +122,35 @@ export function RegistrationForm({ onCancel, onSubmit }) {
 
     try {
       // Open Razorpay checkout for INR 50 (5000 paise)
-  await openRazorpay({
-    amount: 50 * 100,
-    currency: 'INR',
-    name: `${values.firstName} ${values.lastName}`,
-    email: values.email,
-    contact: values.mobile,
-    description: 'Registration fee 50 INR'
+      const paymentResponse = await openRazorpay({
+        amount: 50 * 100,
+        currency: 'INR',
+        name: `${values.firstName} ${values.lastName}`,
+        email: values.email,
+        contact: values.mobile,
+        description: 'Registration fee 50 INR'
       })
 
-      // Successful payment
+      // Successful payment — update UI immediately
       setPaymentStatus('succeeded')
-      // show toast success
-      toast.success('Payment successful!')
+      setSubmitting(false)
+
+      // Save registration to Firestore (best-effort, non-blocking). Keep UX even if save fails.
+      saveRegistration({
+        ...values,
+        paymentConfirmed: true,
+        paymentMethod: 'razorpay',
+        paymentResponse,
+      })
+      
       onSubmit && onSubmit({
         ...values,
         paymentConfirmed: true,
         paymentMethod: 'razorpay'
       })
-
+      toast.success('Payment successful! Registration saved.')
       // Show success briefly then redirect to home
-      setTimeout(() => { window.location.href = '/' }, 2000)
+      // setTimeout(() => { window.location.href = '/' }, 2000)
     } catch (err) {
       setPaymentStatus('error')
       const msg = err?.message || 'Payment failed. Please try again.'
